@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: set env
-        run: echo "NOW=v$(date +'%Y%m%d.%H%M%S')" >> $NOW
+        run: echo "NOW=v$(date +'%Y%m%d.%H%M%S')" >> $GITHUB_ENV
         # run: echo "::set-env name=NOW::v$(date +'%Y%m%d.%H%M%S')"
       # (Optional) GitHub Enterprise requires GHE_HOST variable set
       #- name: Set GHE_HOST
