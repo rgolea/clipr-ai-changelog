@@ -5,10 +5,8 @@ on:
     # branches to consider in the event; optional, defaults to all
     branches:
       - main
-  # pull_request event is required only for autolabeler
-  # pull_request:
-  #   # Only following types are handled by the action, but one can default to all as well
-  #   types: [opened, reopened, synchronize]
+      - env-*
+      - enveu-*
 
 jobs:
   update_release_draft:
@@ -34,10 +32,14 @@ jobs:
       #    echo "GHE_HOST=${GITHUB_SERVER_URL##https:\/\/}" >> $GITHUB_ENV
 
       # Drafts your next Release notes as Pull Requests are merged into "master"
-      # - uses: release-drafter/release-drafter@v5
-      #   # (Optional) specify config name to use, relative to .github/. Default: release-drafter.yml
-      #   with:
-      #     config-name: release-drafter.yml
-      #     version-template: ${{ env.NOW }}
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: release-drafter/release-drafter@v5
+        if: ${{ steps.branch-name.outputs.current_branch }} == 'env-prod'
+        # (Optional) specify config name to use, relative to .github/. Default: release-drafter.yml
+        with:
+          config-name: release-drafter.yml
+          version-template: ${{ steps.branch-name.outputs.current_branch }}-${{ env.NOW }}
+          replacers:
+            - search: '([0-9]+)'
+              replace: '[$1](http://test.com)'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
