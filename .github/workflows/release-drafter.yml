@@ -16,26 +16,29 @@ jobs:
         id: branch-name
         uses: tj-actions/branch-names@v5
       - name: set env
-        id: set-env
-        run: echo "::set-output name=NOW::v.$(date +'%Y%m%d.%H%M%S')"
+        run: echo "NOW=v.$(date +'%Y%m%d.%H%M%S')" >> $GITHUB_ENV
       - uses: actions/checkout@v2
         with:
           fetch-depth: '0'
 
       - name: Bump version and push tag
+        id: bump-version
         uses: anothrNick/github-tag-action@1.36.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CUSTOM_TAG:  ${{ steps.branch-name.outputs.current_branch }}-${{ steps.set-env.outputs.NOW }}
+          CUSTOM_TAG:  ${{ steps.branch-name.outputs.current_branch }}-${{ env.NOW }}
       # (Optional) GitHub Enterprise requires GHE_HOST variable set
       #- name: Set GHE_HOST
       #  run: |
       #    echo "GHE_HOST=${GITHUB_SERVER_URL##https:\/\/}" >> $GITHUB_ENV
 
       # Drafts your next Release notes as Pull Requests are merged into "master"
-      - uses: release-drafter/release-drafter@v5
-        if: ${{ steps.branch-name.outputs.current_branch }} == 'env-prod'
+      - name: Draft Release notes
+        uses: release-drafter/release-drafter@v5
+        if: github.ref == 'refs/heads/env-prod'
         with:
           config-name: release-drafter.yml
+          publish: true
+          tag: ${{ steps.bump-version.outputs.new_tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
