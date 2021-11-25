@@ -33,7 +33,7 @@ jobs:
 
       # Drafts your next Release notes as Pull Requests are merged into "master"
       - uses: release-drafter/release-drafter@v5
-        if: ${{ steps.branch-name.outputs.current_branch }} == 'env-prod'
+        if: ${{ steps.branch-name.outputs.current_branch }} === 'env-prod'
         with:
           config-name: release-drafter.yml
           publish: true
