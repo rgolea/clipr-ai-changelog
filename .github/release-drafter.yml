@@ -4,5 +4,5 @@ template: |
   $CHANGES
 
 replacers:
-  - search: '/([0-9])*/g'
-    replace: 'Release drafter'
+  - search: "/([0-9])*/g"
+    replace: "Release drafter"
