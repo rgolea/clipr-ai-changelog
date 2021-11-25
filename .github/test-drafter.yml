@@ -1,3 +1,8 @@
+template: |
+  ## Changelog
+
+  $CHANGES
+
 replacers:
   - search: '@rgolea'
     replace: 'Rares Golea'
