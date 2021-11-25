@@ -39,5 +39,8 @@ jobs:
         with:
           publish: true
           tag: ${{ steps.bump-version.outputs.new_tag }}
+          replacers:
+            - search: "@rgolea"
+              replace: "Release drafter"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

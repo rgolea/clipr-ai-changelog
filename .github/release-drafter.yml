@@ -1,8 +1,0 @@
-template: |
-  ## What’s test Changed
-
-  $CHANGES
-
-replacers:
-  - search: "@rgolea"
-    replace: "Release drafter"
