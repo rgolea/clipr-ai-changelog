@@ -3,7 +3,6 @@ template: |
 
   $CHANGES
 
-version-template: ${{ steps.branch-name.outputs.current_branch }}-${{ env.NOW }}
 replacers:
   - search: '([0-9])\w+'
     replace: '[$1](https://test.com)'

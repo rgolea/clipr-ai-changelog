@@ -38,5 +38,6 @@ jobs:
         with:
           config-name: release-drafter.yml
           publish: true
+          tag: ${{ steps.branch-name.outputs.current_branch }}-${{ env.NOW }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
