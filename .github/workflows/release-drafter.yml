@@ -37,7 +37,7 @@ jobs:
         uses: release-drafter/release-drafter@v5
         if: github.ref == 'refs/heads/env-prod'
         with:
-          config-name: test-drafter.yml
+          config-name: ./test-drafter.yml
           publish: true
           tag: ${{ steps.bump-version.outputs.new_tag }}
         env:
