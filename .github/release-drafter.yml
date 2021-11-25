@@ -1,6 +1,6 @@
 template: |
-  ## What’s Changed
-  test
+  ## What’s test Changed
+
   $CHANGES
 
 replacers:
