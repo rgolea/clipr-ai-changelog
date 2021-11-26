@@ -87,7 +87,7 @@ jobs:
           BODY: ${{ steps.draft-release-notes.outputs.body }}
 
       - name: Update and Publish Release notes
-        uses: actions/github-scripts@v4
+        uses: actions/github-script@v4
         if: github.ref == 'refs/heads/env-prod'
         with:
           script: |
