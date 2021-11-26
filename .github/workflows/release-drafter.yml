@@ -86,6 +86,7 @@ jobs:
           WORKSPACE_GID: '1185135203815182'
           BODY: ${{ steps.draft-release-notes.outputs.body }}
 
+      - run: echo ${{ steps.add-asana-task-details.outputs.body }}
       - name: Update and Publish Release notes
         uses: actions/github-script@v4
         if: github.ref == 'refs/heads/env-prod'
