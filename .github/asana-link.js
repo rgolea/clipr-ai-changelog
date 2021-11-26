@@ -98,13 +98,18 @@ module.exports.replaceReleaseBodyAndPublish = async function (github, context) {
   }));
 
   const newBody = updatedLines.join('\n');
+  let releaseName = 'Release 1';
 
-  const lastRelease = await github.repos.getLatestRelease({
-    owner: context.repo.owner,
-    repo: context.repo.repo,
-  });
+  try {
+    const lastRelease = await github.repos.getLatestRelease({
+      owner: context.repo.owner,
+      repo: context.repo.repo,
+    });
 
-  console.log(lastRelease);
+    console.log(lastRelease);
+  } catch(e) {
+    console.error(e);
+  }
 
   await github.repos.updateRelease({
     owner: context.repo.owner,
@@ -112,6 +117,6 @@ module.exports.replaceReleaseBodyAndPublish = async function (github, context) {
     release_id: process.env.RELEASE_ID,
     body: newBody,
     draft: false,
-    name: `Release 1`
+    name: releaseName
   });
 }
