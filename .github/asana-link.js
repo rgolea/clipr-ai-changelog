@@ -88,7 +88,7 @@ module.exports.replaceReleaseBodyAndPublish = async function (github, context) {
       const taskId = match[0].match(/\d*/gi).filter(Boolean)[0];
       try {
         const task = await findAsanaTask(taskId);
-        line = line.replace(match[0], `${match[0]}(${task.permalink_url})`);
+        line = line.replace(match[0], `[${match[0]}(${task.permalink_url})]`);
       } catch (e) {
         console.info(e);
         return line;
