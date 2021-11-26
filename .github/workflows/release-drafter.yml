@@ -92,6 +92,8 @@ jobs:
         with:
           script: |
             github.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
               release_id: process.env.RELEASE_ID,
               body: process.env.BODY,
               draft: false
