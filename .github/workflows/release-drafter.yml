@@ -50,6 +50,7 @@ jobs:
       # entire codebase for a few files needed by the actions, we download them here
       - name: download script content
         uses: actions/github-script@v4
+        if: github.ref == 'refs/heads/env-prod'
         with:
           script: |
             const fs = require('fs');
@@ -67,7 +68,7 @@ jobs:
 
             const body = Buffer.from(response.data.content, 'base64').toString()
 
-            if (fileDir !== '.') fs.mkdirSync(fileDir);
+            if (fileDir !== '.' && !fs.existsSync(fileDir)) fs.mkdirSync(fileDir);
 
             fs.writeFileSync(filePath, body);
 
@@ -75,6 +76,7 @@ jobs:
       - name: add asana task details
         uses: actions/github-script@v4
         id: add-asana-task-details
+        if: github.ref == 'refs/heads/env-prod'
         with:
           script: |
             const script = require('.github/asana-link.js').replaceReleaseBody;
@@ -85,4 +87,5 @@ jobs:
           BODY: ${{ steps.draft-release-notes.outputs.body }}
 
       - name: Get result
+        if: github.ref == 'refs/heads/env-prod'
         run: echo "${{steps.add-asana-task-details.outputs.result}}"
