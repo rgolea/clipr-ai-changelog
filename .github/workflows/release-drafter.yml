@@ -45,4 +45,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Link release notes with Asana
-        run: echo {{ steps.draft-release-notes.outputs.body }}
+        run: echo ${{ steps.draft-release-notes.outputs.body }}
