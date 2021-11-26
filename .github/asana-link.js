@@ -86,9 +86,13 @@ module.exports.replaceReleaseBody = async function (body) {
     const match = line.match(TASK_ID_REGEX);
     if (match) {
       const taskId = match[0].match(/\d*/gi).filter(Boolean)[0];
-      await Promise.resolve(); // find asana task
-      console.log(taskId);
-      line = line.replace(match[0], `${match[0]}(https://app.asana.com/0/1186143368499585/1201420665841425)`);
+      try {
+        const task = await findAsanaTask(taskId);
+        line = line.replace(match[0], `${match[0]}(${task.permalink_url})`);
+      } catch (e) {
+        console.info(e);
+        return line;
+      }
     }
     return line;
   }));

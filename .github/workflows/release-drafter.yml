@@ -82,21 +82,21 @@ jobs:
             const script = require('.github/asana-link.js').replaceReleaseBody;
             return await script(process.env.BODY);
         env:
-          # ASANA_PAT: ${{ secrets.ASANA_PAT }}
+          ASANA_PAT: ${{ secrets.ASANA_PAT }}
           WORKSPACE_GID: '1185135203815182'
           BODY: ${{ steps.draft-release-notes.outputs.body }}
 
-      - name: Update Release Notes
-        uses: tubone24/update_release@v1.0
+      - name: Update and Publish Release notes
+        uses: actions/github-scripts@v4
         if: github.ref == 'refs/heads/env-prod'
+        with:
+          script: |
+            github.rest.repos.updateRelease({
+              release_id: process.env.RELEASE_ID,
+              body: process.env.BODY,
+              draft: false
+            });
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          body: ${{ steps.draft-release-notes.outputs.result }}
-
-      - name: Publish Release Notes
-        uses: eregon/publish-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          release_id: ${{ steps.draft-release-notes.outputs.id }}
+          BODY: ${{ steps.add-asana-task-details.outputs.body }}
+          RELEASE_ID: ${{ steps.draft-release-notes.outputs.id }}
