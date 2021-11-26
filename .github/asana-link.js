@@ -105,7 +105,7 @@ module.exports.replaceReleaseBodyAndPublish = async function (github, context) {
       owner: context.repo.owner,
       repo: context.repo.repo,
     });
-
+    console.log('============');
     console.log(lastRelease);
   } catch(e) {
     console.error(e);
