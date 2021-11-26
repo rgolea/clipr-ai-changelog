@@ -1,8 +1,4 @@
 template: |
-  ## What’s Changed
+  ## Changelog
 
   $CHANGES
-
-replacers:
-  - search: '/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gi'
-    replace: '![https://d3ki9tyy5l5ruj.cloudfront.net/obj/df5bcec7e9873dddebdd1328901c287f0f069750/asana-logo-favicon@3x.png]($1)'

@@ -34,11 +34,15 @@ jobs:
 
       # Drafts your next Release notes as Pull Requests are merged into "master"
       - name: Draft Release notes
+        id: draft-release-notes
         uses: release-drafter/release-drafter@v5
         if: github.ref == 'refs/heads/env-prod'
         with:
           config-name: release-drafter.yml
-          publish: true
+          publish: false
           tag: ${{ steps.bump-version.outputs.new_tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Link release notes with Asana
+        run: echo {{ steps.draft-release-notes.outputs.body }}
