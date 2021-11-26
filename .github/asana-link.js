@@ -77,7 +77,7 @@ module.exports = async ({ github, context, core }) => {
 }
 
 
-module.exports.replaceReleaseBody = async function (github, context) {
+module.exports.replaceReleaseBodyAndPublish = async function (github, context) {
   const lines = process.env.BODY.split('\n');
 
   const TASK_ID_REGEX = /^\*(\s)(\[([0-9]*)\])(?!\(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)\))/gi;

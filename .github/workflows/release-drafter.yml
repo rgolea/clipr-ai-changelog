@@ -79,7 +79,7 @@ jobs:
         if: github.ref == 'refs/heads/env-prod'
         with:
           script: |
-            const script = require('.github/asana-link.js').replaceReleaseBody;
+            const script = require('.github/asana-link.js').replaceReleaseBodyAndPublish;
             return await script(github, context);
         env:
           ASANA_PAT: ${{ secrets.ASANA_PAT }}
