@@ -107,9 +107,10 @@ module.exports.replaceReleaseBodyAndPublish = async function (github, context) {
       owner: context.repo.owner,
       repo: context.repo.repo,
     });
-
+    console.log(oldName);
     if(oldName.includes('-')){
       const [ oldYear, oldVersion ] = oldName.split('-')[1].split('.');
+      console.log(year, version, oldYear, oldVersion);
       if(oldYear === year) {
         version = parseInt(oldVersion) + 1;
       }
