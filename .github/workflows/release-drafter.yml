@@ -44,5 +44,45 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Link release notes with Asana
-        run: echo ${{ steps.draft-release-notes.outputs.body }}
+      - run: npm install asana
+
+      # when the github script action executes, it doesn't have the code checked out; to avoid checking out the
+      # entire codebase for a few files needed by the actions, we download them here
+      - name: download script content
+        uses: actions/github-script@v4
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            const filePath = '.github/asana-link.js';
+            const fileDir = path.dirname(filePath);
+
+            const response = await github.repos.getContent({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              path: filePath,
+              ref: context.ref
+            });
+
+            const body = Buffer.from(response.data.content, 'base64').toString()
+
+            if (fileDir !== '.') fs.mkdirSync(fileDir);
+
+            fs.writeFileSync(filePath, body);
+
+      # execute the script file
+      - name: add asana task details
+        uses: actions/github-script@v4
+        id: add-asana-task-details
+        with:
+          script: |
+            const script = require('.github/asana-link.js').replaceReleaseBody;
+            return await script(process.env.BODY);
+        env:
+          # ASANA_PAT: ${{ secrets.ASANA_PAT }}
+          WORKSPACE_GID: '1185135203815182'
+          BODY: ${{ steps.draft-release-notes.outputs.body }}
+
+      - name: Get result
+        run: echo "${{steps.add-asana-task-details.outputs.result}}"
