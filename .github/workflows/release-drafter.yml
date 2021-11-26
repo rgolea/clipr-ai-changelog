@@ -95,7 +95,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               release_id: process.env.RELEASE_ID,
-              body: process.env.BODY,
+              body: process.env.BODY.slice(1, -1),
               draft: false
             });
         env:
