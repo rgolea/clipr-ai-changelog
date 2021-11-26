@@ -101,5 +101,5 @@ jobs:
             # });
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BODY: ${{ steps.add-asana-task-details.outputs.body }}
-          RELEASE_ID: ${{ steps.draft-release-notes.outputs }}
+          BODY: ${{ steps.add-asana-task-details.outputs.result }}
+          RELEASE_ID: ${{ steps.draft-release-notes.outputs.id }}
