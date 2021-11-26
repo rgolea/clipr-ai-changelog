@@ -103,6 +103,7 @@ module.exports.replaceReleaseBody = async function (github, context) {
     owner: context.repo.owner,
     repo: context.repo.repo,
     release_id: process.env.RELEASE_ID,
-    body: newBody
+    body: newBody,
+    draft: false
   });
 }
