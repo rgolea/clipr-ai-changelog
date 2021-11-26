@@ -91,7 +91,7 @@ jobs:
         if: github.ref == 'refs/heads/env-prod'
         with:
           script: |
-            github.rest.repos.updateRelease({
+            github.repos.updateRelease({
               release_id: process.env.RELEASE_ID,
               body: process.env.BODY,
               draft: false
