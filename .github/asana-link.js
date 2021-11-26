@@ -97,5 +97,6 @@ module.exports.replaceReleaseBody = async function (body) {
     return line;
   }));
 
-  return updatedLines.join(' \n');
+  return updatedLines.join(`
+`);
 }
