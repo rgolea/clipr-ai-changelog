@@ -77,8 +77,8 @@ module.exports = async ({ github, context, core }) => {
 }
 
 
-module.exports.replaceReleaseBody = function (body) {
-  const lines = body.split('\n');
+module.exports.replaceReleaseBodyAndPublish = async function (github, context) {
+  const lines = process.env.BODY.split('\n');
 
   const TASK_ID_REGEX = /^\*(\s)(\[([0-9]*)\])(?!\(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)\))/gi;
 
@@ -86,12 +86,45 @@ module.exports.replaceReleaseBody = function (body) {
     const match = line.match(TASK_ID_REGEX);
     if (match) {
       const taskId = match[0].match(/\d*/gi).filter(Boolean)[0];
-      await Promise.resolve(); // find asana task
-      console.log(taskId);
-      line = line.replace(match[0], `${match[0]}(https://app.asana.com/0/1186143368499585/1201420665841425)`);
+      try {
+        const task = await findAsanaTask(taskId);
+        line = line.replace(match[0], `${match[0].replace(taskId, `[${taskId}`)}(${task.permalink_url})]`);
+      } catch (e) {
+        console.info(e);
+        return line;
+      }
     }
     return line;
   }));
 
-  return updatedLines.join('\n');
+  const newBody = updatedLines.join('\n');
+
+  const year = new Date().getFullYear().toString().substr(-2);
+  let version = 1;
+
+  try {
+    const { name: oldName } = await github.repos.getLatestRelease({
+      owner: context.repo.owner,
+      repo: context.repo.repo,
+    });
+
+    if(oldName.includes('-')){
+      const [ oldYear, oldVersion ] = oldName.split('-')[1].split('.');
+      if(oldYear === year) {
+        version = parseInt(oldVersion) + 1;
+      }
+    }
+
+  } catch(e) {
+    console.error(e);
+  }
+
+  await github.repos.updateRelease({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+    release_id: process.env.RELEASE_ID,
+    body: newBody,
+    draft: false,
+    name: `Release-${year}.${version}`
+  });
 }

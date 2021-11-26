@@ -12,9 +12,6 @@ jobs:
   update_release_draft:
     runs-on: ubuntu-latest
     steps:
-      - name: Get branch name
-        id: branch-name
-        uses: tj-actions/branch-names@v5
       - name: set env
         run: echo "NOW=v.$(date +'%Y%m%d.%H%M%S')" >> $GITHUB_ENV
       - uses: actions/checkout@v2
@@ -26,7 +23,7 @@ jobs:
         uses: anothrNick/github-tag-action@1.36.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CUSTOM_TAG:  ${{ steps.branch-name.outputs.current_branch }}-${{ env.NOW }}
+          CUSTOM_TAG:  ${{ github.ref_name }}-${{ env.NOW }}
       # (Optional) GitHub Enterprise requires GHE_HOST variable set
       #- name: Set GHE_HOST
       #  run: |
@@ -45,47 +42,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - run: npm install asana
-
-      # when the github script action executes, it doesn't have the code checked out; to avoid checking out the
-      # entire codebase for a few files needed by the actions, we download them here
-      - name: download script content
-        uses: actions/github-script@v4
-        if: github.ref == 'refs/heads/env-prod'
-        with:
-          script: |
-            const fs = require('fs');
-            const path = require('path');
-
-            const filePath = '.github/asana-link.js';
-            const fileDir = path.dirname(filePath);
-
-            const response = await github.repos.getContent({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              path: filePath,
-              ref: context.ref
-            });
-
-            const body = Buffer.from(response.data.content, 'base64').toString()
-
-            if (fileDir !== '.' && !fs.existsSync(fileDir)) fs.mkdirSync(fileDir);
-
-            fs.writeFileSync(filePath, body);
-
       # execute the script file
-      - name: add asana task details
+      - name: Add asana task details and publish release notes
         uses: actions/github-script@v4
         id: add-asana-task-details
         if: github.ref == 'refs/heads/env-prod'
         with:
           script: |
-            const script = require('.github/asana-link.js').replaceReleaseBody;
-            return await script(process.env.BODY);
+            const script = require('.github/asana-link.js').replaceReleaseBodyAndPublish;
+            return await script(github, context);
         env:
-          # ASANA_PAT: ${{ secrets.ASANA_PAT }}
+          ASANA_PAT: ${{ secrets.ASANA_PAT }}
           WORKSPACE_GID: '1185135203815182'
+          RELEASE_ID: ${{ steps.draft-release-notes.outputs.id }}
           BODY: ${{ steps.draft-release-notes.outputs.body }}
-
-      - name: Get result
-        if: github.ref == 'refs/heads/env-prod'
-        run: echo "${{steps.add-asana-task-details.outputs.result}}"
