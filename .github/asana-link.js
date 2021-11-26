@@ -98,15 +98,23 @@ module.exports.replaceReleaseBodyAndPublish = async function (github, context) {
   }));
 
   const newBody = updatedLines.join('\n');
-  let releaseName = 'Release 1';
+
+  const year = new Date().getFullYear().toString().substr(-2);
+  let version = 1;
 
   try {
-    const lastRelease = await github.repos.getLatestRelease({
+    const { name: oldName } = await github.repos.getLatestRelease({
       owner: context.repo.owner,
       repo: context.repo.repo,
     });
-    console.log('============');
-    console.log(lastRelease);
+
+    if(oldName.includes('-')){
+      const [ oldYear, oldVersion ] = oldName.split('-')[1].split('.');
+      if(oldYear === year) {
+        version = parseInt(oldVersion) + 1;
+      }
+    }
+
   } catch(e) {
     console.error(e);
   }
@@ -117,6 +125,6 @@ module.exports.replaceReleaseBodyAndPublish = async function (github, context) {
     release_id: process.env.RELEASE_ID,
     body: newBody,
     draft: false,
-    name: releaseName
+    name: `Release-${year}.${version}`
   });
 }
