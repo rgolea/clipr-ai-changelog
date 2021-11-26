@@ -73,32 +73,16 @@ jobs:
             fs.writeFileSync(filePath, body);
 
       # execute the script file
-      - name: add asana task details
+      - name: Add asana task details and publish release notes
         uses: actions/github-script@v4
         id: add-asana-task-details
         if: github.ref == 'refs/heads/env-prod'
         with:
           script: |
             const script = require('.github/asana-link.js').replaceReleaseBody;
-            return await script(process.env.BODY);
+            return await script(github, context);
         env:
           ASANA_PAT: ${{ secrets.ASANA_PAT }}
           WORKSPACE_GID: '1185135203815182'
-          BODY: ${{ steps.draft-release-notes.outputs.body }}
-
-      - name: Update and Publish Release notes
-        uses: actions/github-script@v4
-        if: github.ref == 'refs/heads/env-prod'
-        with:
-          script: |
-            github.repos.updateRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: process.env.RELEASE_ID,
-              body: process.env.BODY.slice(1, -1),
-              draft: false
-            });
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BODY: ${{ steps.add-asana-task-details.outputs.result }}
           RELEASE_ID: ${{ steps.draft-release-notes.outputs.id }}
+          BODY: ${{ steps.draft-release-notes.outputs.body }}
