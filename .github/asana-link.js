@@ -99,11 +99,19 @@ module.exports.replaceReleaseBodyAndPublish = async function (github, context) {
 
   const newBody = updatedLines.join('\n');
 
+  const lastRelease = await github.repos.getLatestRelease({
+    owner: context.repo.owner,
+    repo: context.repo.repo,
+  });
+
+  console.log(lastRelease);
+
   await github.repos.updateRelease({
     owner: context.repo.owner,
     repo: context.repo.repo,
     release_id: process.env.RELEASE_ID,
     body: newBody,
-    draft: false
+    draft: false,
+    name: `Release 1`
   });
 }
