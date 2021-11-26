@@ -91,14 +91,15 @@ jobs:
         if: github.ref == 'refs/heads/env-prod'
         with:
           script: |
-            github.repos.updateRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              release_id: process.env.RELEASE_ID,
-              body: process.env.BODY,
-              draft: false
-            });
+            console.log(process.env.BODY);
+            # github.repos.updateRelease({
+            #   owner: context.repo.owner,
+            #   repo: context.repo.repo,
+            #   release_id: process.env.RELEASE_ID,
+            #   body: process.env.BODY,
+            #   draft: false
+            # });
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BODY: ${{ steps.add-asana-task-details.outputs.body }}
-          RELEASE_ID: ${{ steps.draft-release-notes.outputs.id }}
+          RELEASE_ID: ${{ steps.draft-release-notes.outputs }}
