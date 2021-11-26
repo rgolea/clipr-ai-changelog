@@ -103,18 +103,18 @@ module.exports.replaceReleaseBodyAndPublish = async function (github, context) {
   let version = 1;
 
   try {
-    const latestRelease = await github.repos.getLatestRelease({
+    const { data: { name: oldName } } = await github.repos.getLatestRelease({
       owner: context.repo.owner,
       repo: context.repo.repo,
     });
-    console.log(JSON.stringify(latestRelease, null, 2));
-    // if(oldName.includes('-')){
-    //   const [ oldYear, oldVersion ] = oldName.split('-')[1].split('.');
-    //   console.log(year, version, oldYear, oldVersion);
-    //   if(oldYear === year) {
-    //     version = parseInt(oldVersion) + 1;
-    //   }
-    // }
+
+    if(oldName.includes('-')){
+      const [ oldYear, oldVersion ] = oldName.split('-')[1].split('.');
+      console.log(year, version, oldYear, oldVersion);
+      if(oldYear === year) {
+        version = parseInt(oldVersion) + 1;
+      }
+    }
 
   } catch(e) {
     console.error(e);
